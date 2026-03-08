@@ -1,12 +1,15 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:translator/translator.dart';
 
 class Citation {
   final String texteCitation;
   final String auteur;
   Citation({this.texteCitation = "", this.auteur = ""});
 }
+
+final translator=GoogleTranslator();
 
 Future<Citation> obtenirCitation(String theme) async {
   var citation = Citation();
@@ -18,8 +21,9 @@ Future<Citation> obtenirCitation(String theme) async {
   if (json.isNotEmpty) {
     final elmt = json[0] as Map;
     final texteCitation = elmt["quote"];
+    final traduction = await translator.translate(texteCitation, to: "fr");
     final auteur = elmt["author"];
-    citation = Citation(texteCitation: texteCitation, auteur: auteur);
+    citation = Citation(texteCitation: traduction.toString(), auteur: auteur);
   }
 
   return citation;
